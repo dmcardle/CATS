@@ -1,3 +1,4 @@
+#!/usr/bin/env python3.3
 """
 This program will be used to generate audio test files. These test files will
 be read in by the sheet music writer.
@@ -41,7 +42,6 @@ class Note:
         else:
             octaveNum = ''
         
-
         # find note position
         for toneNum, nameArr in enumerate(Note.NOTE_NAMES):
             for name in nameArr:
@@ -60,14 +60,13 @@ class Note:
         return freq
 
 def writeAudioFile(melody):
+    n = Note()
     for noteName in melody:
-        freq = Note.getFreq(noteName)
+        freq = n.getFreq(noteName)
+        print("%s = %.2fHz" %(noteName, freq))
 
 if __name__ == '__main__':
     # baker street melody
-    bakerStreetMelody = ['A', 'F', 'E', 'D', 'C', 'D']
+    bakerStreetMelody = ['A3', 'F4', 'E4', 'D4', 'C4', 'D4']
 
-
-    n = Note()
-    f = n.getFreq("A3")
-    print(f)
+    writeAudioFile(bakerStreetMelody)
