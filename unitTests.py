@@ -11,8 +11,10 @@ class TestExampleGenerator(unittest.TestCase):
 
         # round frequency to integer
         f = int( n.getFreq("A3") + 0.5)
-
         self.assertEqual(f, 220)    
+        
+        f = int( n.getFreq("A4") + 0.5)
+        self.assertEqual(f, 440)
 
 if __name__ == '__main__':
     unittest.main()
