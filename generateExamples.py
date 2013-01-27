@@ -70,4 +70,4 @@ if __name__ == '__main__':
 
     n = Note()
     f = n.getFreq("A3")
-    print f
+    print(f)
