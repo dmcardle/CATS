@@ -1,10 +1,13 @@
-#!/usr/bin/env python3.3
+#!/usr/bin/env python
+
 """
 This program will be used to generate audio test files. These test files will
 be read in by the sheet music writer.
 """
 import math
 import re
+import wave, struct
+
 
 class Note:
     """This class will be used for finding the frequency associated with a note
@@ -26,17 +29,21 @@ class Note:
             ["B"], 
         ]
 
-    def __init__(self):
-        pass 
+    def __init__(self, noteName, durationSec):
+        """noteName should be scientific pitch name, e.g. A0. durationSec is
+        how long the note lasts in seconds."""
+        self.noteName = noteName
+        self.freq = self.calcFreq()
+        self.duration = durationSec
 
-    def getFreq(self, noteNameSciPitch ):
-        """Parse the noteName param according to Scientific Pitch Notation and give the frequency"""
+    def calcFreq(self):
+        """Parse the noteName according to Scientific Pitch Notation and give the frequency"""
 
         # find octave and note name
-        noteName = re.findall(r"[ABCDEFG][#b]?", noteNameSciPitch) 
+        noteName = re.findall(r"[ABCDEFG][#b]?", self.noteName) 
         noteName = noteName[0]
         
-        octaveNum = re.findall(r"\d+", noteNameSciPitch)
+        octaveNum = re.findall(r"\d+", self.noteName)
         if len(octaveNum) > 0:
             octaveNum = int(octaveNum[0])
         else:
@@ -59,14 +66,54 @@ class Note:
 
         return freq
 
-def writeAudioFile(melody):
-    n = Note()
-    for noteName in melody:
-        freq = n.getFreq(noteName)
-        print("%s = %.2fHz" %(noteName, freq))
+def writeAudioFile(fileName, melody):
+    
+    waveWriter = wave.open(fileName, 'w')
+    waveWriter.setnchannels(1)
+    waveWriter.setsampwidth(4)
+    waveWriter.setframerate(44100)
+
+    numHarmonics = 4
+    freqs = []
+    delays = []
+    durations = []
+
+    time = 0
+    for note in melody:
+        print("%s = %.2fHz" %(note.noteName, note.freq))
+        
+        # fundamental frequency
+        f0 = note.freq
+
+        # calculate frequencies of f0 + overtones
+        harmonics = [f0 * 2**(i) for i in range(numHarmonics)]
+
+        for i in range( int(note.duration * 2 * 44100) ):
+
+            value = 0
+            for hFreq in harmonics:
+                # calculate value of sine wave with frequency h at this point in time
+                value += 100 * math.sin(hFreq * i * 2. * math.pi / 44100.)
+           
+            #print value
+            
+            packedValue = struct.pack('h', value)
+            waveWriter.writeframes(packedValue)
+
+        time += note.duration   
+
+    waveWriter.close()
 
 if __name__ == '__main__':
     # baker street melody
-    bakerStreetMelody = ['A3', 'F4', 'E4', 'D4', 'C4', 'D4']
+    bakerStreetMelody = [
+        Note('A3',1/3.),
+        Note('F4',1/2.),
+        Note('E4',1/2.),
+        Note('D4',1/6.),
+        Note('C4',1/6.),
+        Note('D4',1),
+    ]
 
-    writeAudioFile(bakerStreetMelody)
+    writeAudioFile('examples/bakerStreet.wav', bakerStreetMelody)
+
