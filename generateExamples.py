@@ -4,6 +4,7 @@ This program generates .wav files to be used for testing our algorithm.
 """
 import math
 import re
+import os
 import wave, struct
 
 
@@ -69,6 +70,11 @@ def writeAudioFile(fileName, melody):
     objects), synthesize a wav file"""
 
     print "Generating audio file for '%s'" % fileName
+   
+    if not os.path.exists('examples'):
+        os.makedirs('examples')
+    
+    fileName = 'examples/%s' % fileName
     
     waveWriter = wave.open(fileName, 'w')
     waveWriter.setnchannels(1)
@@ -115,7 +121,7 @@ if __name__ == '__main__':
         Note('E4',1/8.),
         Note('D4',1.)
     ]
-    writeAudioFile('examples/bakerStreet.wav', bakerStreetMelody)
+    writeAudioFile('bakerStreet.wav', bakerStreetMelody)
 
     # A minor scale
     scaleAminor = [
@@ -128,4 +134,4 @@ if __name__ == '__main__':
         Note('G2',1/2.),
         Note('A2',1/2.),
     ]
-    writeAudioFile('examples/A_minor.wav', scaleAminor)
+    writeAudioFile('A_minor.wav', scaleAminor)
