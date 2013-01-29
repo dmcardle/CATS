@@ -67,6 +67,7 @@ class Note:
         return freq
 
 def writeAudioFile(fileName, melody):
+    print "Generating audio file for '%s'" % fileName
     
     waveWriter = wave.open(fileName, 'w')
     waveWriter.setnchannels(1)
@@ -112,8 +113,24 @@ if __name__ == '__main__':
         Note('E4',1/2.),
         Note('D4',1/6.),
         Note('C4',1/6.),
-        Note('D4',1),
+        Note('D4',1/8.),
+        Note('E4',1/8.),
+        Note('D4',1.)
     ]
 
     writeAudioFile('examples/bakerStreet.wav', bakerStreetMelody)
 
+
+
+    scaleAminor = [
+        Note('A1',1/2.),
+        Note('B1',1/2.),
+        Note('C2',1/2.),
+        Note('D2',1/2.),
+        Note('E2',1/2.),
+        Note('F2',1/2.),
+        Note('G2',1/2.),
+        Note('A2',1/2.),
+    ]
+
+    writeAudioFile('examples/A_minor.wav', scaleAminor)
