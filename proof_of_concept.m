@@ -12,6 +12,16 @@ overlap = 128;
 fftLength = 1024;
 samplingFreq = 44100;
 
-figure, spectrogram(signal, window, overlap, fftLength, samplingFreq, 'yaxis')
+% create a new figure
+figure
+
+% compute the spectrogram
+[S,F,T,P] = spectrogram(signal, window, overlap, fftLength, samplingFreq, 'yaxis');
+
+% view the spectrogram 
+surf(T,F,10*log10(P),'edgecolor','none'); axis tight; 
+view(0,90);
+xlabel('Time (Seconds)'); ylabel('Hz');
 
 %% look for notes
+
