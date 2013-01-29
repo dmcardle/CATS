@@ -1,8 +1,6 @@
 #!/usr/bin/env python
-
 """
-This program will be used to generate audio test files. These test files will
-be read in by the sheet music writer.
+This program generates .wav files to be used for testing our algorithm.
 """
 import math
 import re
@@ -10,8 +8,8 @@ import wave, struct
 
 
 class Note:
-    """This class will be used for finding the frequency associated with a note
-    name"""
+    """This class will be used for finds the frequency associated with a note
+    name given in scientific pitch notation."""
     
     C0_FREQUENCY = 16.352
     NOTE_NAMES = [
@@ -67,6 +65,9 @@ class Note:
         return freq
 
 def writeAudioFile(fileName, melody):
+    """Given a fileName (including .wav at end) and a melody (array of Note
+    objects), synthesize a wav file"""
+
     print "Generating audio file for '%s'" % fileName
     
     waveWriter = wave.open(fileName, 'w')
@@ -74,12 +75,9 @@ def writeAudioFile(fileName, melody):
     waveWriter.setsampwidth(4)
     waveWriter.setframerate(44100)
 
+    # how many harmonics should be calculated for each note?
     numHarmonics = 4
-    freqs = []
-    delays = []
-    durations = []
 
-    time = 0
     for note in melody:
         print("%s = %.2fHz" %(note.noteName, note.freq))
         
@@ -87,21 +85,21 @@ def writeAudioFile(fileName, melody):
         f0 = note.freq
 
         # calculate frequencies of f0 + overtones
-        harmonics = [f0 * 2**(i) for i in range(numHarmonics)]
+        harmonics = [f0 * 2**(i) for i in range(numHarmonics+1)]
 
         for i in range( int(note.duration * 2 * 44100) ):
 
+            # calculate the amplitude for this timestep
             value = 0
             for hFreq in harmonics:
                 # calculate value of sine wave with frequency h at this point in time
                 value += 100 * math.sin(hFreq * i * 2. * math.pi / 44100.)
            
-            #print value
-            
+            # pack value into a short
             packedValue = struct.pack('h', value)
-            waveWriter.writeframes(packedValue)
 
-        time += note.duration   
+            # save the short to the .wav file
+            waveWriter.writeframes(packedValue)
 
     waveWriter.close()
 
@@ -117,11 +115,9 @@ if __name__ == '__main__':
         Note('E4',1/8.),
         Note('D4',1.)
     ]
-
     writeAudioFile('examples/bakerStreet.wav', bakerStreetMelody)
 
-
-
+    # A minor scale
     scaleAminor = [
         Note('A1',1/2.),
         Note('B1',1/2.),
@@ -132,5 +128,4 @@ if __name__ == '__main__':
         Note('G2',1/2.),
         Note('A2',1/2.),
     ]
-
     writeAudioFile('examples/A_minor.wav', scaleAminor)
