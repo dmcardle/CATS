@@ -16,3 +16,7 @@ Goals
 Requirements
 ------------
 
+FAQ
+---
+
+1. *Where are the examples?* They are not included in the git repository. You have to run generateExamples.py to create them.
