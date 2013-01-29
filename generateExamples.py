@@ -49,11 +49,13 @@ class Note:
             octaveNum = ''
         
         # find note position
-        for toneNum, nameArr in enumerate(Note.NOTE_NAMES):
-            for name in nameArr:
-                if name == noteName:
-                    notePos = toneNum
-                    break
+        def findNotePos(noteName):
+            for toneNum, nameArr in enumerate(Note.NOTE_NAMES):
+                for name in nameArr:
+                    if name == noteName:
+                        return toneNum
+
+        notePos = findNotePos(noteName)
 
         # calculate half steps from our basefrequency
         halfSteps = notePos
