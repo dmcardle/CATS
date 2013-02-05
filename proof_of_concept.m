@@ -30,34 +30,45 @@ xlabel('Time (Seconds)'); ylabel('Hz');
 
 %% look for notes
 
+timeSlice = 1;
+lastNotesFound = {};
 
-%for spectrum = S
-spectrum = S(:, 10);
+for spectrum = S
 
     % spectrum for this time slice
     s = abs(spectrum);
     
     [peakVals, peakLocs] = findPeaks(s, 'MINPEAKHEIGHT', 0.20);
-    
 
-    figure
-    hold on
-
-    plot( s )
     
+    notesFound = {};
     for i = 1:numel(peakLocs)
         thisPeakLoc = peakLocs(i);
         thisPeakVal = peakVals(i);
-        
         thisPeakFreq = F(thisPeakLoc);
         
-        fprintf( 'peak at %d\n', thisPeakLoc)
+        %fprintf( 'peak at %d\n', thisPeakLoc)
         rectangle( 'Position', [thisPeakLoc thisPeakVal 10 0.01 ])
-        text(thisPeakLoc, thisPeakVal, getNoteName(thisPeakFreq));
+        
+        noteName = getNoteName(thisPeakFreq);
+        %text(thisPeakLoc, thisPeakVal, noteName);
+        
+        % determine if this note existed in the last spectrum
+        isNewNote = numel(find(ismember(lastNotesFound, noteName))) == 0;
+        
+        if (isNewNote)
+            % draw the note name using 'text' function on top of the
+            % spectrogram
+            seconds = T(timeSlice);
+            text( seconds, thisPeakFreq, noteName, 'BackgroundColor', 'white');
+        end
+        
+        notesFound{end+1} = noteName;
     end
-
-    hold off
-%end
+    
+    timeSlice = timeSlice + 1;
+    lastNotesFound = notesFound;
+end
 
 
 hold off
