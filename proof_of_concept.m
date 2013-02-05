@@ -5,6 +5,8 @@ This is a proof of concept for my group' s AI project.  We are going to
 attempt to load a WAV file and recognize the individual notes.
 %}
 
+
+
 %% create a spectrogram
 signal = wavread('examples/bakerStreet.wav');
 window = 512;
@@ -27,33 +29,35 @@ view(0,90);
 xlabel('Time (Seconds)'); ylabel('Hz');
 
 %% look for notes
-% We will treat the spectrogram as an image and use image processing
-% techniques to attempt to find the notes being played.
 
-[H,theta,rho] = hough(P);
-hPeaks = houghpeaks(H,5,'threshold',ceil(0.3*max(H(:))));
-lines = houghlines(P,theta,rho,hPeaks,'FillGap',5,'MinLength',7);
 
-figure,hold on
-max_len = 0;
-for k = 1:length(lines)
-   xy = [lines(k).point1; lines(k).point2];
-   plot(xy(:,1),xy(:,2),'LineWidth',2,'Color','green');
+%for spectrum = S
+spectrum = S(:, 10);
 
-   % Plot beginnings and ends of lines
-   plot(xy(1,1),xy(1,2),'x','LineWidth',2,'Color','yellow');
-   plot(xy(2,1),xy(2,2),'x','LineWidth',2,'Color','red');
+    % spectrum for this time slice
+    s = abs(spectrum);
+    
+    [peakVals, peakLocs] = findPeaks(s, 'MINPEAKHEIGHT', 0.20);
+    
 
-   % Determine the endpoints of the longest line segment
-   len = norm(lines(k).point1 - lines(k).point2);
-   if ( len > max_len)
-      max_len = len;
-      xy_long = xy;
-   end
-end
+    figure
+    hold on
 
-% highlight the longest line segment
-plot(xy_long(:,1),xy_long(:,2),'LineWidth',2,'Color','red');
+    plot( s )
+    
+    for i = 1:numel(peakLocs)
+        thisPeakLoc = peakLocs(i);
+        thisPeakVal = peakVals(i);
+        
+        thisPeakFreq = F(thisPeakLoc);
+        
+        fprintf( 'peak at %d\n', thisPeakLoc)
+        rectangle( 'Position', [thisPeakLoc thisPeakVal 10 0.01 ])
+        text(thisPeakLoc, thisPeakVal, getNoteName(thisPeakFreq));
+    end
+
+    hold off
+%end
 
 
 hold off
