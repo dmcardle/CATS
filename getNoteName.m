@@ -27,9 +27,9 @@ function [ noteName ] = getNoteName( freq )
     octave = floor(totalHalfStepsFromC / 12);
     
     % how many half steps from closest C below note
-    halfSteps = mod(totalHalfStepsFromC + 1, 12);
+    halfSteps = mod(totalHalfStepsFromC, 12);
     
-    noteName = sprintf('%s%d', NOTE_NAMES{halfSteps}, octave);
+    noteName = sprintf('%s%d', NOTE_NAMES{halfSteps+1}, octave);
     
 end
 
