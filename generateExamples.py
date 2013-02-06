@@ -84,7 +84,7 @@ def writeAudioFile(fileName, melody):
     waveWriter.setframerate(44100)
 
     # how many harmonics should be calculated for each note?
-    numHarmonics = 8
+    numHarmonics = 4
 
     for note in melody:
         print("%s = %.2fHz" %(note.noteName, note.freq))
@@ -99,9 +99,9 @@ def writeAudioFile(fileName, melody):
 
             # calculate the amplitude for this timestep
             value = 0
-            for (hNum, hFreq) in enumerate(harmonics):
+            for hFreq in harmonics:
                 # calculate value of sine wave with frequency h at this point in time
-                value += 100 * math.sin(hFreq * i * 2. * math.pi / 44100.) * (1./2)**hNum
+                value += 100 * math.sin(hFreq * i * 2. * math.pi / 44100.)
            
             # pack value into a short
             packedValue = struct.pack('h', value)
