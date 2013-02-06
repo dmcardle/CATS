@@ -21,10 +21,9 @@ figure
 [S,F,T,P] = spectrogram(signal, window, overlap, fftLength, samplingFreq, 'yaxis');
 
 P = 10*log10(P);
-S = abs(S);
 
 % view the spectrogram 
-surf(T,F,S,'edgecolor','none');
+surf(T,F,P,'edgecolor','none');
 axis tight; 
 view(0,90);
 xlabel('Time (Seconds)'); ylabel('Hz');
@@ -39,7 +38,7 @@ for spectrum = S
     % spectrum for this time slice
     s = abs(spectrum);
     
-    [peakVals, peakLocs] = findPeaks(s, 'MINPEAKHEIGHT', 0.03);
+    [peakVals, peakLocs] = findPeaks(s, 'MINPEAKHEIGHT', 0.20);
 
     
     notesFound = {}; 
