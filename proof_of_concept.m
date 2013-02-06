@@ -41,7 +41,7 @@ for spectrum = S
     [peakVals, peakLocs] = findPeaks(s, 'MINPEAKHEIGHT', 0.20);
 
     
-    notesFound = {};
+    notesFound = {}; 
     for i = 1:numel(peakLocs)
         thisPeakLoc = peakLocs(i);
         thisPeakVal = peakVals(i);
