@@ -8,6 +8,8 @@ Goals
 
 - [ ] Take "clean" audio file as input -- generated on computer so all pitches are perfect and there is no background noise. Recognize single notes and output names of those notes.
     - [x] In MATLAB
+        ![alt text](https://raw.github.com/crazedgremlin/AudioToSheetMusic/master/proof_of_concept.png "Spectrogram with Notes Labeled")
+    
     - [ ] In Python
 - [ ] Recognize multiple notes
     - [ ] Harmonic removal algorithm
