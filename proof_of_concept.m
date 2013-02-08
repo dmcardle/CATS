@@ -8,7 +8,14 @@ attempt to load a WAV file and recognize the individual notes.
 
 
 %% create a spectrogram
-signal = wavread('examples/bakerStreet.wav');
+signal = wavread('examples/GuitarSample.wav');
+
+% if there are a left and right channel
+if size(signal,2) > 1
+    % average the left and right together
+    signal = mean(signal, 2);
+end
+
 window = 512;
 overlap = 128;
 fftLength = 1024;
