@@ -15,7 +15,7 @@ Goals
     - [ ] Harmonic removal algorithm
 - [ ] Recognize basic rhythms
 - [ ] Recognize complex rhythm
-- [ ] Recognize "dirty" audio files, taken from real recordings 
+- [ ] Recognize "dirty" audio files, taken from real recordings
 
 
 Requirements

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 """
 This program generates .wav files to be used for testing our algorithm.
 """
