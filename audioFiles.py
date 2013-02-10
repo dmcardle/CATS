@@ -1,10 +1,23 @@
 import math
 import os
-import wave, struct
+import wave
+import struct
+
+
 
 
 def readAudioFile(fileName):
-    pass
+    
+    waveReader = wave.open(fileName, 'r')
+    nFrames = waveReader.getnframes();
+    data = waveReader.readframes(10)
+
+    for  b in data:
+        print ord(b)
+
+if __name__ == '__main__':
+    readAudioFile('examples/A_minor.wav')
+
 
 def writeAudioFile(fileName, melody):
     """Given a fileName (including .wav at end) and a melody (array of Note
