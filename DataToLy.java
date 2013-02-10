@@ -9,14 +9,14 @@ import java.io.IOException;
  * @author russel
  *
  */
-public class dataToLy {
+public class DataToLy {
   // array [beats] [notes 
 	private char[][] notes;
 	private char[][] rhythms;
 	private int primaryBeat;
 	
 	public static void main(String[] args) {
-		dataToLy a = new dataToLy();
+		DataToLy a = new DataToLy();
 		a.defineMusic();
 		a.write();
 	}
@@ -83,8 +83,9 @@ public class dataToLy {
 		try {
 			String beginning = ((char)92)+"version "+((char)34)+"2.14.0"+((char)34)+
 					'\n'+((char)92)+"relative c' {\n";
-			File file = new File("/home/russel/Documents/workspace/AItests/testing.ly");
- 
+			//File file = new File("/home/russel/Documents/workspace/AItests/testing.ly");
+            File file = new File("examples/testing.ly");
+
 			// if file doesnt exists, then create it
 			if (!file.exists()) {
 				file.createNewFile();
