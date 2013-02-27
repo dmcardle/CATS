@@ -1,19 +1,21 @@
+#!/usr/bin/env python2.7
+
 import math
 import os
 import wave
 import struct
+import scipy.io.wavfile
 
-
-
+import matplotlib
+matplotlib.use('MacOSX')
+import pylab
 
 def readAudioFile(fileName):
-    
-    waveReader = wave.open(fileName, 'r')
-    nFrames = waveReader.getnframes();
-    data = waveReader.readframes(10)
+    """returns tuple (sampleRate, data)"""
 
-    for  b in data:
-        print ord(b)
+    # invoke scipy to read file for us 
+    (rate,data) = scipy.io.wavfile.read(fileName)
+    return (rate, data)
 
 if __name__ == '__main__':
     readAudioFile('examples/A_minor.wav')

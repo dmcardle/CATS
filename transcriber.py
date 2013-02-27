@@ -3,19 +3,18 @@ import scipy
 import pylab # (matplotlib)
 
 from music import Note
+from audioFiles import *
 
-class AudioFileReader:
-    def __init__(self):
-        self.audioData = []
-
-    def readAudioFile(self, path):
-        pass
 
 
 class Transcriber:
     """Takes an audio file in and creates a list of measures"""
-    def __init__(self):
+    def __init__(self, fileName):
         self.measures = []
+        
+        (rate, data) = readAudioFile(fileName)
+        self.rate = rate
+        self.data = data
 
     def detectNotes( iSpec ):
         """Detect notes in the instantaneous spectrum, iSpec"""
