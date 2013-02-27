@@ -20,5 +20,5 @@ class Transcriber:
         """Detect notes in the instantaneous spectrum, iSpec"""
 
 if __name__ == '__main__':
-    transcriber = Transcriber()
+    transcriber = Transcriber('examples/A_minor.wav')
 
