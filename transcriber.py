@@ -21,12 +21,12 @@ class Transcriber:
         self.data = data
 
     def detectNotes(self):
-        pylab.specgram( self.data, NFFT=1024, noverlap=256 )
+        pylab.specgram( self.data, NFFT=2**11, noverlap=2**9 )
         pylab.show()
 
 if __name__ == '__main__':
-    transcriber = Transcriber('examples/GuitarSample.wav')
-    #transcriber = Transcriber('examples/A_minor.wav')
+    #transcriber = Transcriber('examples/GuitarSample.wav')
+    transcriber = Transcriber('examples/A_minor.wav')
     
     transcriber.detectNotes()
   
