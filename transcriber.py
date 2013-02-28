@@ -1,10 +1,10 @@
+#!/usr/bin/env python2.7
+
 import numpy
 import scipy
-import pylab # (matplotlib)
 
 from music import Note
 from audioFiles import *
-
 
 
 class Transcriber:
@@ -13,12 +13,28 @@ class Transcriber:
         self.measures = []
         
         (rate, data) = readAudioFile(fileName)
+
+        if type(data[0]) == numpy.ndarray:
+            data = map( lambda x: numpy.average(x), data)
+        
         self.rate = rate
         self.data = data
 
-    def detectNotes( iSpec ):
-        """Detect notes in the instantaneous spectrum, iSpec"""
+    def detectNotes(self):
+        pylab.specgram( self.data, NFFT=1024, noverlap=256 )
+        pylab.show()
 
 if __name__ == '__main__':
-    transcriber = Transcriber('examples/A_minor.wav')
-
+    transcriber = Transcriber('examples/GuitarSample.wav')
+    #transcriber = Transcriber('examples/A_minor.wav')
+    
+    transcriber.detectNotes()
+  
+    # plot the waveform 
+    """ 
+    audio = transcriber.data
+    pylab.figure()
+    pylab.title("waveform")
+    pylab.plot(audio)
+    pylab.show() 
+    """

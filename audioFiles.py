@@ -12,7 +12,6 @@ import pylab
 
 def readAudioFile(fileName):
     """returns tuple (sampleRate, data)"""
-
     # invoke scipy to read file for us 
     (rate,data) = scipy.io.wavfile.read(fileName)
     return (rate, data)
@@ -21,7 +20,7 @@ if __name__ == '__main__':
     readAudioFile('examples/A_minor.wav')
 
 
-def writeAudioFile(fileName, melody):
+def writeAudioFile(fileName, melody, numHarmonics=4):
     """Given a fileName (including .wav at end) and a melody (array of Note
     objects), synthesize a wav file"""
 
@@ -36,9 +35,6 @@ def writeAudioFile(fileName, melody):
     waveWriter.setnchannels(1)
     waveWriter.setsampwidth(4)
     waveWriter.setframerate(44100)
-
-    # how many harmonics should be calculated for each note?
-    numHarmonics = 8
 
     for note in melody:
         print("%s = %.2fHz" %(note.noteName, note.freq))
