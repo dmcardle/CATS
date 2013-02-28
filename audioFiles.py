@@ -45,13 +45,18 @@ def writeAudioFile(fileName, melody, numHarmonics=4):
         # calculate frequencies of f0 + overtones
         harmonics = [f0 * 2**(i) for i in range(numHarmonics+1)]
 
-        for i in range( int(note.duration * 2 * 44100) ):
+        numAmplitudes = int(note.duration * 2 * 44100) 
+
+        for i in range(numAmplitudes):
 
             # calculate the amplitude for this timestep
             value = 0
             for (hNum, hFreq) in enumerate(harmonics):
+                # determine intensity of sound wave based on position in note duration
+                intensity = 100 * math.sin( math.pi*i/numAmplitudes )
+
                 # calculate value of sine wave with frequency h at this point in time
-                value += 100 * math.sin(hFreq * i * 2. * math.pi / 44100.) * (1./2)**hNum
+                value += intensity * math.sin(hFreq * i * 2. * math.pi / 44100.) * (1./2)**hNum
            
             # pack value into a short
             packedValue = struct.pack('h', value)
