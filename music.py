@@ -1,6 +1,7 @@
 #!/usr/bin/env python2.7
 
 import re   # regular expressions
+from math import log
 
 class Note:
     """This class will be used for finds the frequency associated with a note
@@ -28,6 +29,7 @@ class Note:
         self.noteName = noteName
         self.freq = self.calcFreq()
         self.duration = durationSec
+
 
     def calcFreq(self):
         """Parse the noteName according to Scientific Pitch Notation and give the frequency"""
@@ -60,4 +62,37 @@ class Note:
         freq = Note.C0_FREQUENCY * 2**(halfSteps / 12.0)
 
         return freq
+       
+    @staticmethod
+    def getNoteName(freq, useFlats=True):
+        # number of half steps from note C0
+        totalHalfStepsFromC = int(round(log(freq/Note.C0_FREQUENCY) * 12.0 / log(2)))
+
+        # which octave in Scientific Pitch Notation
+        octave = int(totalHalfStepsFromC / 12.)
+        
+        # how many half steps from closest C below note
+        halfSteps = totalHalfStepsFromC % 12
+       
+        noteName = Note.NOTE_NAMES[halfSteps]
+
+        # if this note has more than one name, figure out which representation
+        # to use
+        if len(noteName) > 1:
+            if useFlats:
+                noteName = noteName[1]
+            else:
+                noteName = noteName[0]
+        else:
+            # extract the single item from the list
+            noteName = noteName[0]
+             
+        # express in SPN
+        noteName = '%s%d' % (noteName, octave)
+    
+        return noteName
+
+if __name__ == '__main__':
+    print Note.getNoteName(440)
+    print Note.getNoteName(220, useFlats=False)
 
