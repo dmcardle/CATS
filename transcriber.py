@@ -15,14 +15,21 @@ class Transcriber:
         (rate, data) = readAudioFile(fileName)
 
         if type(data[0]) == numpy.ndarray:
-            data = map( lambda x: numpy.average(x), data)
+            data = map(numpy.average, data)
         
         self.rate = rate
         self.data = data
 
     def detectNotes(self):
-        pylab.specgram( self.data, NFFT=2**11, noverlap=2**9 )
-        pylab.show()
+        (Pxx, freqs, bins, im) = \
+            pylab.specgram( self.data, NFFT=2**11, noverlap=2**9 )
+        
+
+        #pylab.show()
+
+        
+
+        print x
 
 if __name__ == '__main__':
     #transcriber = Transcriber('examples/GuitarSample.wav')
