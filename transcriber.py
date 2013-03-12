@@ -16,15 +16,16 @@ class Transcriber:
         
         (rate, data) = readAudioFile(fileName)
 
-        if type(data[0]) == np.ndarray:
-            data = map(np.average, data)
-        
+        # if there are multiple channels
+        if data.shape[1] > 1:
+            # select channel 0
+            data = data[:,0]
+
         self.rate = rate
         self.data = data
 
     def detectNotes(self):
-        (Pxx, freqs, bins, im) = pylab.specgram( self.data, Fs=self.rate,
-            NFFT=2**11, noverlap=2**9, sides='onesided' )
+
 
         def smooth2d( grid, nPointsX, nPointsY):
             """Interpolate grid, inserting `nPointsX` points in between each X
@@ -46,75 +47,63 @@ class Transcriber:
             xValsNew = np.linspace(0, len(signal), nPoints)
             smoothed = s(xValsNew) 
             return smoothed
-     
-     
-        # smooth the spectrogram
-        nPointsSmooth = 1
-        
-        PxxSmooth = smooth2d( Pxx, 1, nPointsSmooth ) 
-        
-
-        pylab.matshow(Pxx)
-
-        pylab.show()
-        return
-        
+    
+    
+        # SPECTROGRAM 
+        (Pxx, freqs, bins, im) = pylab.specgram( self.data, Fs=self.rate,
+            NFFT=2**11, noverlap=2**8, pad_to=2048, sides='onesided')
 
         # how many instantaneous spectra did we calculate
-        (numBins, numSpectra) = PxxSmooth.shape
+        (numBins, numSpectra) = Pxx.shape
 
         # how many seconds in entire audio recording
         numSeconds = float(self.data.size) / self.rate
 
-        # put n points between each frequency bin
-
-        # iSpec is instantaneous spectrum
+        lastFreqsAtPeaks = []
         for x in range(numSpectra):
 
-            iSpec = PxxSmooth[:, x]
-
-
+            # iSpec is instantaneous spectrum
+            iSpec = Pxx[:, x]
+            
             if x % 10 == 0:
                 print "%f.2%% done" % (100.*x / numSpectra)
 
             # TODO REMOVE
-            if x > 30:
+            if x > 100:
                 break
 
             # find list of peak indices in the instantaneous spectrum
             peakInd = argrelmax(iSpec, order=10)
 
-            for i in np.nditer(peakInd):
+            # convert position of peak in spectrum to a frequency
+            # value in Hz
+            freqsAtPeaks = [freqs[i] for i in np.nditer(peakInd)]
 
-                # convert position of peak in spectrum to a frequency
-                # value in Hz
-                f = 1.*freqsSmooth[i]
-                
-                #print "f = "
-                #print f
+            t = 1.*numSeconds*x/numSpectra
 
-                #print "freqs = "
-                #print freqs.size
+            for f in freqsAtPeaks:
 
-                # calculate time in seconds
-                t = 1. *numSeconds * x / numSpectra
+                # --- select only frequencies that were
+                # --- found in the last iSpec
+                keep = False
+                tol = 5   # define frequency tolerance
+                for fOld in lastFreqsAtPeaks:
+                    if fOld-tol <= f <= fOld+tol:
+                        keep = True
+                # ------------------------------------
 
-                #print "type of f = %s" % type(f)
-                #print "type of t = %s" % type(t)
+                if keep:
+                    # draw a patch
+                    pylab.gca().add_patch(
+                        pylab.Rectangle((t,f), 0.005, 100))
 
-
-                #print "%.2fHz at %.2fs" % (f,t)
-
-                # draw a patch
-                pylab.gca().add_patch(
-                    pylab.Rectangle((t,f), 0.005, 100))
-
+            lastFreqsAtPeaks = freqsAtPeaks
         pylab.show()
 
 if __name__ == '__main__':
-    #transcriber = Transcriber('examples/GuitarSample.wav')
+    transcriber = Transcriber('examples/GuitarSample.wav')
     #transcriber = Transcriber('examples/A_minor.wav')
-    transcriber = Transcriber('examples/bakerStreet.wav')
+    #transcriber = Transcriber('examples/bakerStreet.wav')
     
     transcriber.detectNotes()
   
