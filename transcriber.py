@@ -1,5 +1,7 @@
 #!/usr/bin/env python2.7
 
+import sys # for command-line arguments
+
 import numpy as np
 from scipy.signal import argrelmax
 from scipy import interpolate
@@ -17,7 +19,7 @@ class Transcriber:
         (rate, data) = readAudioFile(fileName)
 
         # if there are multiple channels
-        if data.shape[1] > 1:
+        if len(data.shape) > 1:
             # select channel 0
             data = data[:,0]
 
@@ -25,7 +27,6 @@ class Transcriber:
         self.data = data
 
     def detectNotes(self):
-
 
         def smooth2d( grid, nPointsX, nPointsY):
             """Interpolate grid, inserting `nPointsX` points in between each X
@@ -49,9 +50,11 @@ class Transcriber:
             return smoothed
     
     
-        # SPECTROGRAM 
+        # SPECTROGRAM
+        # documentation at
+        # http://matplotlib.org/api/pyplot_api.html?highlight=specgram#matplotlib.pyplot.specgram
         (Pxx, freqs, bins, im) = pylab.specgram( self.data, Fs=self.rate,
-            NFFT=2**11, noverlap=2**8, pad_to=2048, sides='onesided')
+            NFFT=2**12, noverlap=2**8, sides='onesided')
 
         # how many instantaneous spectra did we calculate
         (numBins, numSpectra) = Pxx.shape
@@ -59,6 +62,7 @@ class Transcriber:
         # how many seconds in entire audio recording
         numSeconds = float(self.data.size) / self.rate
 
+        """
         lastFreqsAtPeaks = []
         for x in range(numSpectra):
 
@@ -98,14 +102,22 @@ class Transcriber:
                         pylab.Rectangle((t,f), 0.005, 100))
 
             lastFreqsAtPeaks = freqsAtPeaks
+
+        """
+
         pylab.show()
 
 if __name__ == '__main__':
-    transcriber = Transcriber('examples/GuitarSample.wav')
-    #transcriber = Transcriber('examples/A_minor.wav')
-    #transcriber = Transcriber('examples/bakerStreet.wav')
-    
-    transcriber.detectNotes()
+
+    print sys.argv
+    if len(sys.argv) > 1:
+        filename = sys.argv[1]
+        transcriber = Transcriber(filename)
+        transcriber.detectNotes()
+
+    else:
+        print "Specify a .wav file!"
+
   
     # plot the waveform 
     """ 
