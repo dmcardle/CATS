@@ -67,6 +67,80 @@ class Transcriber:
 
         pylab.show()
 
+		
+	def noteElimination(N, D):
+
+		#Deletes some of the note candidates in an attempt to find the correct note intended
+
+		#N is the array of note energies
+		#D is the array of note durations
+
+		#C is the array of candidates
+		#E is the array of eliminated notes
+
+
+		#initialize the variables
+		sum = 0;
+		i = 1;
+
+
+		#calculate the minAvgNoteEnergy
+
+		for x in range(1, len(N)):
+			sum = sum + N[x]
+
+		minAvgNoteEnergy = sum/len(N)
+
+		#eliminate low energy notes
+
+		for y in range(1, len(N)):
+			if (N[j] < minAvgNoteEnergy):
+
+				#note is no longer a candidate, so place in eliminated notes
+				E[i] = N[y]
+
+			else:
+				C[i] = N[y] #put the note in the possible candidates
+				i=i+1
+
+
+		#calculate the minimum trajectory length
+
+		D.sort()
+		minTrajLen = D[1]
+
+
+		#eliminate short duration notes
+
+		for j in range(1, len(N)):
+			if D[j] < minTrajLen:
+
+				#eliminate note
+				E[end+1] = N[j]
+
+			else:
+				#note is a candidate
+				C[end+1] = N[j]
+				i=i+1
+
+
+		#finds and eliminates harmonics
+
+
+
+		for z in range(1, len(C)):
+			for a in range(z+1, len(C)):
+				#If the energy of the higher note is less than half of
+				#the energy of the lower note, the higher one is eliminated
+				if (C[a]*.5 > C[z]):
+
+					#keep lower note as candidate
+					C[end+1] = C[a]
+
+					#eliminate higher note
+					E[end+1] = C[z]
+
+
 if __name__ == '__main__':
 
     print sys.argv
