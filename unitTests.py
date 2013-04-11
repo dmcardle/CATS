@@ -1,13 +1,12 @@
 import unittest
-import generateExamples
-
+from music import Note
 
 class TestExampleGenerator(unittest.TestCase):
     def setUp(self):
         pass 
     
     def testNoteGetFreq(self):
-        n = generateExamples.Note("A3", 1)
+        n = Note("A3", 1)
 
         # round frequency to integer
         f = int(n.freq + 0.5)
