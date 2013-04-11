@@ -6,8 +6,20 @@ import wave
 import struct
 import scipy.io.wavfile
 
+import platform
+
 import matplotlib
-matplotlib.use('MacOSX')
+
+operatingSystem = platform.system()
+if operatingSystem == 'Linux':
+    matplotlib.use('GTK')
+elif operatingSystem == 'Darwin':
+    matplotlib.use('MacOSX')
+elif operatingSystem == 'Windows':
+    matplotlib.use('TkAgg')
+
+
+matplotlib.use('Agg')
 import pylab
 
 def readAudioFile(fileName):
