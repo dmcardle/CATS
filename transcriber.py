@@ -3,6 +3,9 @@
 import sys # for command-line arguments
 
 import numpy as np
+from matplotlib.axes import Axes
+
+from scipy.ndimage.filters import sobel
 from scipy.signal import argrelmax
 from scipy import interpolate
 #from scipy.signal import find_peaks_cwt
@@ -28,82 +31,39 @@ class Transcriber:
 
     def detectNotes(self):
 
-        def smooth2d( grid, nPointsX, nPointsY):
-            """Interpolate grid, inserting `nPointsX` points in between each X
-            coordinate and `nPointsY` between each Y."""
-            numRow,numCol = grid.shape
-            x = range(0, numCol)
-            y = range(0, numRow)
-            f = interpolate.interp2d(x, y, grid, kind='linear')
-
-            xNew = np.arange(0, numCol, 1./nPointsX)
-            yNew = np.arange(0, numCol, 1./nPointsY)
-            gridNew = f(xNew, yNew)
-
-            return gridNew
-
-        def smooth( signal, nPoints ):
-            xVals = range(len(signal))
-            s = interpolate.InterpolatedUnivariateSpline(xVals, signal)
-            xValsNew = np.linspace(0, len(signal), nPoints)
-            smoothed = s(xValsNew) 
-            return smoothed
-    
     
         # SPECTROGRAM
         # documentation at
         # http://matplotlib.org/api/pyplot_api.html?highlight=specgram#matplotlib.pyplot.specgram
+        # 
+        # this call to specgram is precise with regard to frequencies, but
+        # blurry in time domain
         (Pxx, freqs, bins, im) = pylab.specgram( self.data, Fs=self.rate,
-            NFFT=2**12, noverlap=2**8, sides='onesided')
+            NFFT=2**12, noverlap=2**8, sides='onesided', scale_by_freq=True)
+
+
+        # ------------------------
+        # [BEGIN] identify runs of notes 
+        # ------------------------
 
         # how many instantaneous spectra did we calculate
         (numBins, numSpectra) = Pxx.shape
 
         # how many seconds in entire audio recording
         numSeconds = float(self.data.size) / self.rate
+        
+        # sobel edge detect
+        #edges = np.zeros( Pxx.shape )
+        #sobel(Pxx, output=edges)
+        #pylab.imshow(edges)
 
-        """
-        lastFreqsAtPeaks = []
-        for x in range(numSpectra):
-
-            # iSpec is instantaneous spectrum
-            iSpec = Pxx[:, x]
-            
-            if x % 10 == 0:
-                print "%f.2%% done" % (100.*x / numSpectra)
-
-            # TODO REMOVE
-            if x > 100:
-                break
-
-            # find list of peak indices in the instantaneous spectrum
-            peakInd = argrelmax(iSpec, order=10)
-
-            # convert position of peak in spectrum to a frequency
-            # value in Hz
-            freqsAtPeaks = [freqs[i] for i in np.nditer(peakInd)]
-
-            t = 1.*numSeconds*x/numSpectra
-
-            for f in freqsAtPeaks:
-
-                # --- select only frequencies that were
-                # --- found in the last iSpec
-                keep = False
-                tol = 5   # define frequency tolerance
-                for fOld in lastFreqsAtPeaks:
-                    if fOld-tol <= f <= fOld+tol:
-                        keep = True
-                # ------------------------------------
-
-                if keep:
-                    # draw a patch
-                    pylab.gca().add_patch(
-                        pylab.Rectangle((t,f), 0.005, 100))
-
-            lastFreqsAtPeaks = freqsAtPeaks
-
-        """
+        #pylab.figure()
+        #pylab.pcolor( np.arange(0, self.data.size), freqs, Pxx )
+       
+        
+        # ------------------------
+        # END [identify runs of notes]
+        # ------------------------
 
         pylab.show()
 
