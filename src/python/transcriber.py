@@ -2,11 +2,12 @@
 
 import sys # for command-line arguments
 
+# OpenCV -- computer vision library
+#import cv, cv2
 import numpy as np
-from matplotlib.axes import Axes
 
-from scipy.ndimage.filters import sobel
-from scipy import interpolate
+from matplotlib.image import NonUniformImage
+from matplotlib import cm
 
 from music import Note
 from audioFiles import *
@@ -28,8 +29,12 @@ class Transcriber:
         self.data = data
 
     def detectNotes(self):
+        
+        fig = pylab.figure()
+        fig.suptitle('Track Detection')
+        ax = fig.add_subplot(211)
+        ax.set_title('Spectrogram 1')
 
-    
         # SPECTROGRAM
         # documentation at
         # http://matplotlib.org/api/pyplot_api.html?highlight=specgram#matplotlib.pyplot.specgram
@@ -38,7 +43,6 @@ class Transcriber:
         # blurry in time domain
         (Pxx, freqs, bins, im) = pylab.specgram( self.data, Fs=self.rate,
             NFFT=2**12, noverlap=2**8, sides='onesided', scale_by_freq=True)
-
 
         # ------------------------
         # [BEGIN] identify runs of notes 
@@ -49,14 +53,30 @@ class Transcriber:
 
         # how many seconds in entire audio recording
         numSeconds = float(self.data.size) / self.rate
-        
-        # sobel edge detect
-        #edges = np.zeros( Pxx.shape )
-        #sobel(Pxx, output=edges)
-        #pylab.imshow(edges)
 
-        #pylab.figure()
-        #pylab.pcolor( np.arange(0, self.data.size), freqs, Pxx )
+        ax = fig.add_subplot(212)
+        ax.set_title('Spectrogram 2')
+        
+        x = np.arange(0, numSpectra)
+        y = np.arange(0, numBins)
+        z = Pxx
+        
+        ax.pcolormesh(x,y,z)
+        ax.set_yscale('symlog', basey=2)
+        ax.set_xlim(0, numSpectra)
+        ax.set_ylim(0, numBins)
+
+
+
+        # (1) use Probabilistic Hough Transform from openCV to find horizontal
+        # lines (spectrogram tracks)
+        # documentation @ http://docs.opencv.org/trunk/modules/imgproc/doc/feature_detection.html#houghlinesp
+
+        #edges = cv2.Canny(Pxx, 80, 120)
+        #lines = cv2.HoughLinesP( edges , 1, math.pi/2, 2, None, 30, 1)
+
+        # (2) for each of these horizontal lines, determine frequency and
+        # length of run
        
         
         # ------------------------
@@ -141,7 +161,7 @@ class Transcriber:
 
 if __name__ == '__main__':
 
-	# Determine which file to read
+    # Determine which file to read
     if len(sys.argv) > 1:
         filename = sys.argv[1]
         transcriber = Transcriber(filename)
