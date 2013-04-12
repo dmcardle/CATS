@@ -141,23 +141,11 @@ class Transcriber:
 
 if __name__ == '__main__':
 
-    print sys.argv
+	# Determine which file to read
     if len(sys.argv) > 1:
         filename = sys.argv[1]
         transcriber = Transcriber(filename)
         transcriber.detectNotes()
-
     else:
         print "Specify a .wav file!"
-
-  
-    # plot the waveform 
-    """ 
-    audio = transcriber.data
-    pylab.figure()
-    pylab.title("waveform")
-    pylab.plot(audio)
-    pylab.show() 
-    """
-
 
