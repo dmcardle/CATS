@@ -5,21 +5,25 @@ import os
 import wave
 import struct
 import scipy.io.wavfile
-
-import platform
-
 import matplotlib
 
+# Determine which platform we are on and use appropriate matplotlib backend
+import platform
 operatingSystem = platform.system()
+
 if operatingSystem == 'Linux':
-    matplotlib.use('GTK')
+	print "Using GTK backend"
+	matplotlib.use('GTK')
+
 elif operatingSystem == 'Darwin':
-    matplotlib.use('MacOSX')
+	print "Using MacOSX backend"
+	matplotlib.use('MacOSX')
+
 elif operatingSystem == 'Windows':
-    matplotlib.use('TkAgg')
+	print "Using TkAgg backend"
+	matplotlib.use('TkAgg')
 
 
-matplotlib.use('Agg')
 import pylab
 
 def readAudioFile(fileName):

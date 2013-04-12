@@ -6,9 +6,7 @@ import numpy as np
 from matplotlib.axes import Axes
 
 from scipy.ndimage.filters import sobel
-from scipy.signal import argrelmax
 from scipy import interpolate
-#from scipy.signal import find_peaks_cwt
 
 from music import Note
 from audioFiles import *
