@@ -6,7 +6,7 @@ The purpose of this project is to generate sheet music from audio.
 Goals
 -----
 
-- [ ] Take "clean" audio file as input -- generated on computer so all pitches are perfect and there is no background noise. Recognize single notes and output names of those notes.
+- [x] Take "clean" audio file as input -- generated on computer so all pitches are perfect and there is no background noise. Recognize single notes and output names of those notes.
     - [x] In MATLAB
         ![alt text](https://raw.github.com/crazedgremlin/CATS/master/doc/img/proof_of_concept.png "Spectrogram with Notes Labeled")
     
