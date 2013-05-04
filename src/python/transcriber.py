@@ -3,11 +3,11 @@
 import sys # for command-line arguments
 
 # OpenCV -- computer vision library
-#import cv, cv2
+import cv, cv2
+
 import numpy as np
 
-from matplotlib.image import NonUniformImage
-from matplotlib import cm
+import matplotlib.pyplot as plt
 
 from music import Note
 from audioFiles import *
@@ -32,8 +32,6 @@ class Transcriber:
         
         fig = pylab.figure()
         fig.suptitle('Track Detection')
-        ax = fig.add_subplot(211)
-        ax.set_title('Spectrogram 1')
 
         # SPECTROGRAM
         # documentation at
@@ -42,7 +40,10 @@ class Transcriber:
         # this call to specgram is precise with regard to frequencies, but
         # blurry in time domain
         (Pxx, freqs, bins, im) = pylab.specgram( self.data, Fs=self.rate,
-            NFFT=2**12, noverlap=2**8, sides='onesided', scale_by_freq=True)
+            NFFT=2**11, noverlap=2**5, sides='onesided', scale_by_freq=True)
+
+
+        print "SHAPE OF freqs", freqs.shape
 
         # ------------------------
         # [BEGIN] identify runs of notes 
@@ -50,35 +51,93 @@ class Transcriber:
 
         # how many instantaneous spectra did we calculate
         (numBins, numSpectra) = Pxx.shape
+        print "SHAPE OF Pxx:", Pxx.shape
 
         # how many seconds in entire audio recording
         numSeconds = float(self.data.size) / self.rate
 
-        ax = fig.add_subplot(212)
-        ax.set_title('Spectrogram 2')
-        
-        x = np.arange(0, numSpectra)
-        y = np.arange(0, numBins)
-        z = Pxx
-        
-        ax.pcolormesh(x,y,z)
-        ax.set_yscale('symlog', basey=2)
-        ax.set_xlim(0, numSpectra)
-        ax.set_ylim(0, numBins)
+
+        scaledPxx = 10 * np.log10(Pxx)
 
 
 
-        # (1) use Probabilistic Hough Transform from openCV to find horizontal
-        # lines (spectrogram tracks)
-        # documentation @ http://docs.opencv.org/trunk/modules/imgproc/doc/feature_detection.html#houghlinesp
 
-        #edges = cv2.Canny(Pxx, 80, 120)
-        #lines = cv2.HoughLinesP( edges , 1, math.pi/2, 2, None, 30, 1)
+        def findPeaks( list, minPeakVal=None):
+            peakPos = []
+            lastSlopeNeg = None
+            for i in range(0, len(sample)-1):
+                # we will be comparing two points on the frequency spectrum at
+                # a time
+               
+                # If the two points are equal, the slope is 0, so we will move
+                # on to the next point. For example, if we have the list [0 1 2
+                # 2 1 0], there is clearly a peak, but it is between the two 2
+                # values
+                if (sample[i] != sample[i+1]):
+                    thisSlopeNeg = sample[i] > sample[i+1]
 
-        # (2) for each of these horizontal lines, determine frequency and
-        # length of run
-       
-        
+                    if lastSlopeNeg != None and not lastSlopeNeg and thisSlopeNeg:
+                        if minPeakVal != None and sample[i] >= minPeakVal:
+                            peakPos.append(i)
+
+                    lastSlopeNeg = thisSlopeNeg
+           
+            # TODO some sort of statistical analysis of the significance of the
+            # peaks found. For now, I'll just have a magic number representing
+            # the minimum peak value.
+            
+            return peakPos
+
+
+
+        lastNotes = None
+
+        for t in range(0, numSpectra):
+
+            # extract a block from the spectrogram
+            sample = Pxx[:, t]
+            print "SHAPE OF sample:", sample.shape
+
+            # find the peaks in this profile (peaks represent notes)
+            peakPos = findPeaks(sample, minPeakVal=1e9)
+
+            # FIXME remove peaks that correspond to overtones of another peak
+
+
+            # determine which notes found are new (don't exist in the last
+            # notes list)
+            newNotes = []
+            newPeaks = []
+            for p in peakPos:
+                f = freqs[p]
+                note = Note.getNoteName(f)
+                if lastNotes != None and note not in lastNotes:
+                    newNotes.append(note)
+                    newPeaks.append(p)
+
+            # for each of the new peaks, determine the name of the note that is being played
+            for p in newPeaks:
+                f = freqs[p]
+                print "f = %.2fHz" % f
+                noteName = Note.getNoteName(f)
+                print "Note: %s" % noteName
+
+                # annotate the spectrogram
+                time = (1.0*t / numSpectra) * numSeconds;
+                circle = plt.Circle( (time, f), 0.01, color='w')
+                fig.gca().add_artist(circle)
+
+                xPos = 1.0*t / numSpectra
+                yPos = f / freqs[-1]
+
+                plt.text( xPos, yPos, noteName, transform=fig.gca().transAxes)
+
+
+            notes = map( lambda p : Note.getNoteName(freqs[p]), peakPos)
+            lastNotes = notes
+
+
+
         # ------------------------
         # END [identify runs of notes]
         # ------------------------
