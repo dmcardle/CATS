@@ -10,8 +10,9 @@ Goals
     - [x] In MATLAB
         ![alt text](https://raw.github.com/crazedgremlin/CATS/master/doc/img/proof_of_concept.png "Spectrogram with Notes Labeled")
     
-    - [ ] In Python
-- [ ] Recognize multiple notes
+    - [x] In Python
+        ![alt text](https://raw.github.com/crazedgremlin/CATS/master/doc/img/python_implementation.png "Spectrogram with Notes Labeled")
+- [x] Recognize multiple notes
     - [ ] Harmonic removal algorithm
 - [ ] Recognize basic rhythms
 - [ ] Recognize complex rhythm
