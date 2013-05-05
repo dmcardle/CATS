@@ -2,11 +2,7 @@
 
 import sys # for command-line arguments
 
-# OpenCV -- computer vision library
-import cv, cv2
-
 import numpy as np
-
 import matplotlib.pyplot as plt
 
 from music import Note
