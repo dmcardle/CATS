@@ -109,6 +109,8 @@ class Transcriber:
 
 
         # TODO find the optimal value of minPeakVal based on the spectrogram
+        # determine thresholding value
+        thresh = np.mean( Pxx )
 
 
         lastNotes = None
@@ -120,7 +122,7 @@ class Transcriber:
             #print "SHAPE OF sample:", sample.shape
 
             # find the peaks in this profile (peaks represent notes)
-            peakPos = findPeaks(sample, minPeakVal=1e9)
+            peakPos = findPeaks(sample, minPeakVal=thresh)
 
             # FIXME remove peaks that correspond to overtones of another peak
 
