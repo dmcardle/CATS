@@ -1,12 +1,13 @@
 #!/usr/bin/env python2.7
 
+from music import Note
+from audioFiles import *
+
 import sys # for command-line arguments
 
 import numpy as np
 import matplotlib.pyplot as plt
 
-from music import Note
-from audioFiles import *
 
 
 class Transcriber:
