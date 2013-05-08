@@ -1,6 +1,6 @@
 #!/usr/bin/env python2.7
 """
-This program generates .wav files to be used for testing our algorithm.
+This script generates .wav files to be used for testing our algorithm.
 """
 
 from music import Note

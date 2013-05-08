@@ -1,0 +1,83 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module smoothing</title>
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>smoothing</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/dan/Dropbox/Geneseo/2013-1 Spring/CSCI 376 - Artificial Intelligence/project_code/AudioToSheetMusic/src/python/smoothing.py">/Users/dan/Dropbox/Geneseo/2013-1 Spring/CSCI 376 - Artificial Intelligence/project_code/AudioToSheetMusic/src/python/smoothing.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="scipy.interpolate.html">scipy.interpolate</a><br>
+<a href="math.html">math</a><br>
+</td><td width="25%" valign=top><a href="matplotlib.html">matplotlib</a><br>
+<a href="numpy.html">numpy</a><br>
+</td><td width="25%" valign=top><a href="pylab.html">pylab</a><br>
+<a href="scipy.html">scipy</a><br>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-randn"><strong>randn</strong></a>(...)</dt><dd><tt><a href="#-randn">randn</a>([d1,&nbsp;...,&nbsp;dn])<br>
+&nbsp;<br>
+Return&nbsp;a&nbsp;sample&nbsp;(or&nbsp;samples)&nbsp;from&nbsp;the&nbsp;"standard&nbsp;normal"&nbsp;distribution.<br>
+&nbsp;<br>
+If&nbsp;positive,&nbsp;int_like&nbsp;or&nbsp;int-convertible&nbsp;arguments&nbsp;are&nbsp;provided,<br>
+`randn`&nbsp;generates&nbsp;an&nbsp;array&nbsp;of&nbsp;shape&nbsp;``(d1,&nbsp;...,&nbsp;dn)``,&nbsp;filled<br>
+with&nbsp;random&nbsp;floats&nbsp;sampled&nbsp;from&nbsp;a&nbsp;univariate&nbsp;"normal"&nbsp;(Gaussian)<br>
+distribution&nbsp;of&nbsp;mean&nbsp;0&nbsp;and&nbsp;variance&nbsp;1&nbsp;(if&nbsp;any&nbsp;of&nbsp;the&nbsp;:math:`d_i`&nbsp;are<br>
+floats,&nbsp;they&nbsp;are&nbsp;first&nbsp;converted&nbsp;to&nbsp;integers&nbsp;by&nbsp;truncation).&nbsp;A&nbsp;single<br>
+float&nbsp;randomly&nbsp;sampled&nbsp;from&nbsp;the&nbsp;distribution&nbsp;is&nbsp;returned&nbsp;if&nbsp;no<br>
+argument&nbsp;is&nbsp;provided.<br>
+&nbsp;<br>
+This&nbsp;is&nbsp;a&nbsp;convenience&nbsp;function.&nbsp;&nbsp;If&nbsp;you&nbsp;want&nbsp;an&nbsp;interface&nbsp;that&nbsp;takes&nbsp;a<br>
+tuple&nbsp;as&nbsp;the&nbsp;first&nbsp;argument,&nbsp;use&nbsp;`numpy.random.standard_normal`&nbsp;instead.<br>
+&nbsp;<br>
+Parameters<br>
+----------<br>
+d1,&nbsp;...,&nbsp;dn&nbsp;:&nbsp;`n`&nbsp;ints,&nbsp;optional<br>
+&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;dimensions&nbsp;of&nbsp;the&nbsp;returned&nbsp;array,&nbsp;should&nbsp;be&nbsp;all&nbsp;positive.<br>
+&nbsp;<br>
+Returns<br>
+-------<br>
+Z&nbsp;:&nbsp;ndarray&nbsp;or&nbsp;float<br>
+&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;``(d1,&nbsp;...,&nbsp;dn)``-shaped&nbsp;array&nbsp;of&nbsp;floating-point&nbsp;samples&nbsp;from<br>
+&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;standard&nbsp;normal&nbsp;distribution,&nbsp;or&nbsp;a&nbsp;single&nbsp;such&nbsp;float&nbsp;if<br>
+&nbsp;&nbsp;&nbsp;&nbsp;no&nbsp;parameters&nbsp;were&nbsp;supplied.<br>
+&nbsp;<br>
+See&nbsp;Also<br>
+--------<br>
+random.standard_normal&nbsp;:&nbsp;Similar,&nbsp;but&nbsp;takes&nbsp;a&nbsp;tuple&nbsp;as&nbsp;its&nbsp;argument.<br>
+&nbsp;<br>
+Notes<br>
+-----<br>
+For&nbsp;random&nbsp;samples&nbsp;from&nbsp;:math:`N(\mu,&nbsp;\sigma^2)`,&nbsp;use:<br>
+&nbsp;<br>
+``sigma&nbsp;*&nbsp;np.random.<a href="#-randn">randn</a>(...)&nbsp;+&nbsp;mu``<br>
+&nbsp;<br>
+Examples<br>
+--------<br>
+&gt;&gt;&gt;&nbsp;np.random.<a href="#-randn">randn</a>()<br>
+2.1923875335537315&nbsp;#random<br>
+&nbsp;<br>
+Two-by-four&nbsp;array&nbsp;of&nbsp;samples&nbsp;from&nbsp;N(3,&nbsp;6.25):<br>
+&nbsp;<br>
+&gt;&gt;&gt;&nbsp;2.5&nbsp;*&nbsp;np.random.<a href="#-randn">randn</a>(2,&nbsp;4)&nbsp;+&nbsp;3<br>
+array([[-4.49401501,&nbsp;&nbsp;4.00950034,&nbsp;-1.81814867,&nbsp;&nbsp;7.29718677],&nbsp;&nbsp;#random<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0.39924804,&nbsp;&nbsp;4.68456316,&nbsp;&nbsp;4.99394529,&nbsp;&nbsp;4.84057254]])&nbsp;#random</tt></dd></dl>
+ <dl><dt><a name="-random"><strong>random</strong></a>(...)</dt><dd><tt><a href="#-random">random</a>()&nbsp;-&gt;&nbsp;x&nbsp;in&nbsp;the&nbsp;interval&nbsp;[0,&nbsp;1).</tt></dd></dl>
+ <dl><dt><a name="-smooth"><strong>smooth</strong></a>(xVals, signal, windowLen<font color="#909090">=10</font>)</dt></dl>
+</td></tr></table>
+</body></html>

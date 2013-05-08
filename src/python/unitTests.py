@@ -2,6 +2,8 @@ import unittest
 from music import Note
 import transcriber
 
+"""This is where all unit tests go."""
+
 class TestExampleGenerator(unittest.TestCase):
     def setUp(self):
         pass 

@@ -32,7 +32,8 @@ class Note:
 
 
     def calcFreq(self):
-        """Parse the noteName according to Scientific Pitch Notation and give the frequency"""
+        """Parse the noteName according to Scientific Pitch Notation and give
+        the frequency"""
 
         # find octave and note name
         noteName = re.findall(r"[ABCDEFG][#b]?", self.noteName) 
@@ -65,6 +66,9 @@ class Note:
        
     @staticmethod
     def getNoteName(freq, useFlats=True):
+        """Get the note name associated with the specified frequency. If
+        useFlats parameter is not set to False, the returned string will
+        default to using flats as the note name convention."""
         # number of half steps from note C0
         totalHalfStepsFromC = int(round(log(freq/Note.C0_FREQUENCY) * 12.0 / log(2)))
 
@@ -87,7 +91,7 @@ class Note:
             # extract the single item from the list
             noteName = noteName[0]
              
-        # express in SPN
+        # express in Scientific Pitch Notation
         noteName = '%s%d' % (noteName, octave)
     
         return noteName
