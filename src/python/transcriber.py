@@ -43,6 +43,8 @@ class Transcriber:
 
 
     def detectNotes(self):
+        """Detect the notes in the audio recording self.data.  Plots a
+        spectrogram with detected notes labelled."""
         
         fig = pylab.figure()
         fig.suptitle('Track Detection')
