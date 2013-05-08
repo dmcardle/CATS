@@ -95,7 +95,7 @@ class Transcriber:
 
             # extract a block from the spectrogram
             sample = Pxx[:, t]
-            print "SHAPE OF sample:", sample.shape
+            #print "SHAPE OF sample:", sample.shape
 
             # find the peaks in this profile (peaks represent notes)
             peakPos = findPeaks(sample, minPeakVal=1e9)
@@ -117,9 +117,9 @@ class Transcriber:
             # for each of the new peaks, determine the name of the note that is being played
             for p in newPeaks:
                 f = freqs[p]
-                print "f = %.2fHz" % f
                 noteName = Note.getNoteName(f)
-                print "Note: %s" % noteName
+
+                print "%s @ %.2fHz" % (noteName, f)
 
                 # annotate the spectrogram
                 time = (1.0*t / numSpectra) * numSeconds;
