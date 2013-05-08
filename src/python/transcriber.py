@@ -121,7 +121,8 @@ class Transcriber:
 
                 print "%s @ %.2fHz" % (noteName, f)
 
-                # annotate the spectrogram
+                # Annotate the spectrogram. Note that circles plotted actually
+                # appear as horizontal lines thanks to our logarithmic y scale.
                 time = (1.0*t / numSpectra) * numSeconds;
                 circle = plt.Circle( (time, f), 0.01, color='w')
                 fig.gca().add_artist(circle)
