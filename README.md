@@ -1,4 +1,4 @@
-AudioToSheetMusic
+CATS: Convert Audio to Score
 =================
 
 The purpose of this project is to generate sheet music from audio.
