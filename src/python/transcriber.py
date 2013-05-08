@@ -86,6 +86,8 @@ class Transcriber:
             return peakPos
 
 
+        # TODO find the optimal value of minPeakVal based on the spectrogram
+
 
         lastNotes = None
 
