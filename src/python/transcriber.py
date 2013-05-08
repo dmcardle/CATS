@@ -25,6 +25,23 @@ class Transcriber:
         self.rate = rate
         self.data = data
 
+
+    @staticmethod
+    def smooth(signal):
+        """Return a smoothed version of signal with length n-1, computed by
+        averaging adjacent values."""
+
+        n = len(signal)
+        newSignal = np.ndarray( n-1 )
+        
+        for (i, val) in enumerate(signal):
+            if i < len(signal) - 1:
+                # avoid an integer overflow by distributing 1/2
+                newSignal[i] = signal[i]/2.0 + signal[i+1]/2.0
+
+        return np.array(newSignal)
+
+
     def detectNotes(self):
         
         fig = pylab.figure()
