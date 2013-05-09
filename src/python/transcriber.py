@@ -151,7 +151,7 @@ class Transcriber:
             prevF0NoteNames = []
             # Go through notes backwards, from high to low.
             # Variable i represents peak number.
-            for i in range( len(peakPos)-1, -1, -1):
+            for i in reversed(range(len(peakPos))):
 
                 # Variable pos represents at which y-value in spectrogram this
                 # peak was found. Variable intensity contains the intensity at
