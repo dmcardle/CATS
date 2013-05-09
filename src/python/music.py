@@ -23,11 +23,16 @@ class Note:
             ["B"], 
         ]
 
-    def __init__(self, noteName, durationSec):
+    def __init__(self, noteName=None, durationSec=None, freq=None):
         """noteName should be scientific pitch name, e.g. A0. durationSec is
         how long the note lasts in seconds."""
         self.noteName = noteName
-        self.freq = self.calcFreq()
+        
+        if freq != None:
+            self.freq = freq
+        else:
+            self.freq = self.calcFreq()
+
         self.duration = durationSec
 
 
@@ -92,9 +97,9 @@ class Note:
             noteName = noteName[0]
              
         # express in Scientific Pitch Notation
-        noteName = '%s%d' % (noteName, octave)
+        sciPitchNoteName = '%s%d' % (noteName, octave)
     
-        return noteName
+        return (noteName, octave, sciPitchNoteName)
 
 if __name__ == '__main__':
     print Note.getNoteName(440)
