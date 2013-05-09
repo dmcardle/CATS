@@ -110,7 +110,7 @@ class Transcriber:
 
         # TODO find the optimal value of minPeakVal based on the spectrogram
         # determine thresholding value
-        thresh = np.mean( Pxx )
+        thresh = np.mean( Pxx )*.25
 
         FREQ_THRESH = 10 
         lastNotes = [] 
