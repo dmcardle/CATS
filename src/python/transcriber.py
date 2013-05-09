@@ -60,6 +60,8 @@ class Transcriber:
 
         smoothAudio = Transcriber.smooth( self.data )
 
+        (Pxx, freqs, bins, im) = pylab.specgram( smoothAudio, Fs=self.rate,
+            NFFT=2**12, noverlap=2**8, sides='onesided', scale_by_freq=True)
 
 
         print "SHAPE OF freqs", freqs.shape
