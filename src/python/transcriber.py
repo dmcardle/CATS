@@ -4,6 +4,7 @@ from music import Note
 from audioFiles import *
 
 import sys # for command-line arguments
+from collections import deque
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -55,8 +56,6 @@ class Transcriber:
         # 
         # this call to specgram is precise with regard to frequencies, but
         # blurry in time domain
-        (Pxx, freqs, bins, im) = pylab.specgram( self.data, Fs=self.rate,
-            NFFT=2**11, noverlap=2**5, sides='onesided', scale_by_freq=True)
 
         smoothAudio = Transcriber.smooth( self.data )
 
@@ -83,8 +82,9 @@ class Transcriber:
 
 
 
-        def findPeaks( list, minPeakVal=None):
+        def findPeaks( sample, minPeakVal=None):
             peakPos = []
+            peakVal = []
             lastSlopeNeg = None
             for i in range(0, len(sample)-1):
                 # we will be comparing two points on the frequency spectrum at
@@ -97,9 +97,10 @@ class Transcriber:
                 if (sample[i] != sample[i+1]):
                     thisSlopeNeg = sample[i] > sample[i+1]
 
-                    if lastSlopeNeg != None and not lastSlopeNeg and thisSlopeNeg:
+                    if lastSlopeNeg != None and (not lastSlopeNeg) and thisSlopeNeg:
                         if minPeakVal != None and sample[i] >= minPeakVal:
                             peakPos.append(i)
+                            peakVal.append(sample[i+1])
 
                     lastSlopeNeg = thisSlopeNeg
            
@@ -107,60 +108,117 @@ class Transcriber:
             # peaks found. For now, I'll just have a magic number representing
             # the minimum peak value.
             
-            return peakPos
+            return (peakPos, peakVal)
 
 
         # TODO find the optimal value of minPeakVal based on the spectrogram
         # determine thresholding value
         thresh = np.mean( Pxx )
 
-
-        lastNotes = None
+        FREQ_THRESH = 10 
+        lastNotes = [] 
+        prevF0NoteNamesSciPitchQueue = deque(maxlen=15)
+        def recentlySaw( noteNameSciPitch ):
+            print prevF0NoteNamesSciPitchQueue
+            for prevF0NoteNames in prevF0NoteNamesSciPitchQueue:
+                if noteNameSciPitch in prevF0NoteNames:
+                    return True
+            return False
 
         for t in range(0, numSpectra):
+
+            print "-----------------------"
 
             # extract a block from the spectrogram
             sample = Pxx[:, t]
             #print "SHAPE OF sample:", sample.shape
 
             # find the peaks in this profile (peaks represent notes)
-            peakPos = findPeaks(sample, minPeakVal=thresh)
-
-            # FIXME remove peaks that correspond to overtones of another peak
-
+            (peakPos, peakVal) = findPeaks(sample, minPeakVal=thresh)
 
             # determine which notes found are new (don't exist in the last
             # notes list)
-            newNotes = []
             newPeaks = []
-            for p in peakPos:
-                f = freqs[p]
-                note = Note.getNoteName(f)
-                if lastNotes != None and note not in lastNotes:
-                    newNotes.append(note)
-                    newPeaks.append(p)
 
-            # for each of the new peaks, determine the name of the note that is being played
-            for p in newPeaks:
-                f = freqs[p]
-                noteName = Note.getNoteName(f)
+            noteNames = []
 
-                print "%s @ %.2fHz" % (noteName, f)
-
-                # Annotate the spectrogram. Note that circles plotted actually
-                # appear as horizontal lines thanks to our logarithmic y scale.
-                time = (1.0*t / numSpectra) * numSeconds;
-                circle = plt.Circle( (time, f), 0.01, color='w')
-                fig.gca().add_artist(circle)
-
-                xPos = 1.0*t / numSpectra
-                yPos = f / freqs[-1]
-
-                plt.text( xPos, yPos, noteName, transform=fig.gca().transAxes)
+            def freqsAreSameNote( f1, oct1, f2, oct2):
+                # scale freqs
+                f1 = f1 / 2**oct1
+                f2 = f2 / 2**oct2
+                return abs(f1-f2) < FREQ_THRESH
 
 
-            notes = map( lambda p : Note.getNoteName(freqs[p]), peakPos)
-            lastNotes = notes
+            prevF0NoteNames = []
+            # Go through notes backwards, from high to low.
+            # Variable i represents peak number.
+            for i in range( len(peakPos)-1, -1, -1):
+
+                # Variable pos represents at which y-value in spectrogram this
+                # peak was found. Variable intensity contains the intensity at
+                # that peak; how much energy at that frequency.
+                pos = peakPos[i]
+                intensity = peakVal[i]
+
+
+
+
+                #print "pos =", pos
+                #print "----"
+
+
+                f = freqs[pos]
+                if 20 <= f <= 20000: # if it is audible to a human...
+
+                    (noteName, octave, sciPitchNoteName) = Note.getNoteName( f )
+                    noteNames.append(sciPitchNoteName)
+                     
+                    # attempt to find fundamental frequency of this note
+                    f0 = None
+                    f0Pos = None
+                    for j in range( i ):
+                        otherFreq = freqs[ peakPos[j] ]
+                        otherIntensity = peakVal[j]
+                        (otherNoteName, otherOctave, otherSciPitch) = Note.getNoteName( otherFreq )
+                        if freqsAreSameNote( f, octave, otherFreq, otherOctave) \
+                           and intensity <= 0.5*otherIntensity:
+                            f0 = f / 2**octave
+                            f0Pos = j
+                            break
+
+
+                    if f0 != None:
+
+                        (f0NoteName, f0Octave, f0SciPitch) = Note.getNoteName(f0)
+                        print "f0 = %f" % f0
+                        print "recently saw %s? %s" % (f0SciPitch, recentlySaw(f0SciPitch))
+
+                        # if we found an f0 and we haven't already handled it
+                        if (f0SciPitch not in prevF0NoteNames) and (not recentlySaw( f0SciPitch )) and (f0SciPitch not in lastNotes):
+                            prevF0NoteNames.append(f0SciPitch)
+
+                            #print "%s @ %.2fHz" % (f0SciPitch, f0)
+                    
+                            # Annotate the spectrogram. Note that circles plotted actually
+                            # appear as horizontal lines thanks to our logarithmic y scale.
+                            time = (1.0*t / numSpectra) * numSeconds;
+                            circle = plt.Circle( (time, f), 0.01, color='w')
+                            fig.gca().add_artist(circle)
+
+                            xPos = 1.0*t / numSpectra
+                            yPos = f / freqs[-1]       # y position = f0 / max freq
+
+                            plt.text( xPos, yPos, f0SciPitch, transform=fig.gca().transAxes)
+
+
+                    # determine if this note is a harmonic... 
+                    thisNoteIsHarmonic = False
+
+            lastNotes = noteNames
+
+            # save the F0s encountered in this time slice
+            prevF0NoteNamesSciPitchQueue.append( prevF0NoteNames )
+
 
 
 
@@ -171,77 +229,6 @@ class Transcriber:
         pylab.show()
 
         
-    def noteElimination(N, D):
-
-        #Deletes some of the note candidates in an attempt to find the correct note intended
-
-        #N is the array of note energies
-        #D is the array of note durations
-
-        #C is the array of candidates
-        #E is the array of eliminated notes
-
-
-        #initialize the variables
-        sum = 0;
-        i = 1;
-
-
-        #calculate the minAvgNoteEnergy
-
-        for x in range(1, len(N)):
-            sum = sum + N[x]
-
-        minAvgNoteEnergy = sum/len(N)
-
-        #eliminate low energy notes
-
-        for y in range(1, len(N)):
-            if (N[j] < minAvgNoteEnergy):
-
-                #note is no longer a candidate, so place in eliminated notes
-                E[i] = N[y]
-
-            else:
-                C[i] = N[y] #put the note in the possible candidates
-                i=i+1
-
-
-        #calculate the minimum trajectory length
-
-        D.sort()
-        minTrajLen = D[1]
-
-
-        #eliminate short duration notes
-
-        for j in range(1, len(N)):
-            if D[j] < minTrajLen:
-
-                #eliminate note
-                E[end+1] = N[j]
-
-            else:
-                #note is a candidate
-                C[end+1] = N[j]
-                i=i+1
-
-
-        #finds and eliminates harmonics
-
-
-
-        for z in range(1, len(C)):
-            for a in range(z+1, len(C)):
-                #If the energy of the higher note is less than half of
-                #the energy of the lower note, the higher one is eliminated
-                if (C[a]*.5 > C[z]):
-
-                    #keep lower note as candidate
-                    C[end+1] = C[a]
-
-                    #eliminate higher note
-                    E[end+1] = C[z]
 
 
 if __name__ == '__main__':
