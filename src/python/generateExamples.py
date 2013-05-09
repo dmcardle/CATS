@@ -6,8 +6,13 @@ This script generates .wav files to be used for testing our algorithm.
 from music import Note
 from audioFiles import writeAudioFile
 
+import os
+
 
 if __name__ == '__main__':
+
+    os.chdir('../../')
+
     # baker street melody
     bakerStreetMelody = [
         Note('A3',1/3.),
