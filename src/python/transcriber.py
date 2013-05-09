@@ -76,10 +76,7 @@ class Transcriber:
         # how many seconds in entire audio recording
         numSeconds = float(self.data.size) / self.rate
 
-
         scaledPxx = 10 * np.log10(Pxx)
-
-
 
 
         def findPeaks( sample, minPeakVal=None):
@@ -117,9 +114,9 @@ class Transcriber:
 
         FREQ_THRESH = 10 
         lastNotes = [] 
-        prevF0NoteNamesSciPitchQueue = deque(maxlen=15)
+        prevF0NoteNamesSciPitchQueue = deque(maxlen=5)
         def recentlySaw( noteNameSciPitch ):
-            print prevF0NoteNamesSciPitchQueue
+            #print prevF0NoteNamesSciPitchQueue
             for prevF0NoteNames in prevF0NoteNamesSciPitchQueue:
                 if noteNameSciPitch in prevF0NoteNames:
                     return True
@@ -180,14 +177,19 @@ class Transcriber:
                         otherFreq = freqs[ peakPos[j] ]
                         otherIntensity = peakVal[j]
                         (otherNoteName, otherOctave, otherSciPitch) = Note.getNoteName( otherFreq )
+
                         if freqsAreSameNote( f, octave, otherFreq, otherOctave) \
-                           and intensity <= 0.5*otherIntensity:
-                            f0 = f / 2**octave
+                           and intensity <= 0.5*otherIntensity \
+                           and 20 <= otherFreq <= 20000:
+
+                            # compute frequency of f moved down some number of
+                            # octaves
+                            f0 = f / 2.0**(octave-otherOctave)
                             f0Pos = j
                             break
 
 
-                    if f0 != None:
+                    if f0 != None :
 
                         (f0NoteName, f0Octave, f0SciPitch) = Note.getNoteName(f0)
                         print "f0 = %f" % f0
