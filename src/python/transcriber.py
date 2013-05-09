@@ -128,6 +128,8 @@ class Transcriber:
 
             # extract a block from the spectrogram
             sample = Pxx[:, t]
+            sample = Transcriber.smooth( sample )
+
             #print "SHAPE OF sample:", sample.shape
 
             # find the peaks in this profile (peaks represent notes)
