@@ -22,6 +22,10 @@ Goals
 Requirements
 ------------
 
+- Python 2.7
+- matplotlib
+- numpy
+
 FAQ
 ---
 
