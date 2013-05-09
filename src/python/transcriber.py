@@ -160,12 +160,6 @@ class Transcriber:
                 intensity = peakVal[i]
 
 
-
-
-                #print "pos =", pos
-                #print "----"
-
-
                 f = freqs[pos]
                 if 20 <= f <= 20000: # if it is audible to a human...
 
@@ -198,7 +192,9 @@ class Transcriber:
                         print "recently saw %s? %s" % (f0SciPitch, recentlySaw(f0SciPitch))
 
                         # if we found an f0 and we haven't already handled it
-                        if (f0SciPitch not in prevF0NoteNames) and (not recentlySaw( f0SciPitch )) and (f0SciPitch not in lastNotes):
+                        if (f0SciPitch not in prevF0NoteNames) \
+                            and (not recentlySaw( f0SciPitch )) \
+                            and (f0SciPitch not in lastNotes):
                             prevF0NoteNames.append(f0SciPitch)
 
                             #print "%s @ %.2fHz" % (f0SciPitch, f0)
