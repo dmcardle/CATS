@@ -28,13 +28,26 @@ if __name__ == '__main__':
 
     # A minor scale
     scaleAminor = [
-        Note('A1',1/2.),
-        Note('B1',1/2.),
-        Note('C2',1/2.),
-        Note('D2',1/2.),
-        Note('E2',1/2.),
-        Note('F2',1/2.),
-        Note('G2',1/2.),
         Note('A2',1/2.),
+        Note('B2',1/2.),
+        Note('C3',1/2.),
+        Note('D3',1/2.),
+        Note('E3',1/2.),
+        Note('F3',1/2.),
+        Note('G3',1/2.),
+        Note('A3',1/2.),
     ]
     writeAudioFile('A_minor.wav', scaleAminor)
+
+    # C major scale
+    scaleCMajor = [
+        Note('C3',1/2.),
+        Note('D3',1/2.),
+        Note('E3',1/2.),
+        Note('F3',1/2.),
+        Note('G3',1/2.),
+        Note('A3',1/2.),
+        Note('B3',1/2.),
+        Note('C4',1/2.),
+    ]
+    writeAudioFile('C_major.wav', scaleCMajor)
