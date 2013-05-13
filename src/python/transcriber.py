@@ -163,6 +163,7 @@ class Transcriber:
                     (noteName, octave, sciPitchNoteName) = Note.getNoteName( f )
                     noteNames.append(sciPitchNoteName)
     
+                                     
                     # -------------------------------------------------------
                     # attempt to find fundamental frequency of this note
                     f0 = None
