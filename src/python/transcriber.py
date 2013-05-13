@@ -135,9 +135,6 @@ class Transcriber:
             # find the peaks in this profile (peaks represent notes)
             (peakPos, peakVal) = findPeaks(sample, minPeakVal=thresh)
 
-            # determine which notes found are new (don't exist in the last
-            # notes list)
-            newPeaks = []
 
             noteNames = []
 
@@ -165,7 +162,8 @@ class Transcriber:
 
                     (noteName, octave, sciPitchNoteName) = Note.getNoteName( f )
                     noteNames.append(sciPitchNoteName)
-                     
+    
+                    # -------------------------------------------------------
                     # attempt to find fundamental frequency of this note
                     f0 = None
                     f0Pos = None
@@ -183,6 +181,8 @@ class Transcriber:
                             f0 = f / 2.0**(octave-otherOctave)
                             f0Pos = j
                             break
+                    # -------------------------------------------------------
+
 
 
                     if f0 != None :
@@ -191,10 +191,11 @@ class Transcriber:
                         print "f0 = %f" % f0
                         print "recently saw %s? %s" % (f0SciPitch, recentlySaw(f0SciPitch))
 
-                        # if we found an f0 and we haven't already handled it
+                        # If we haven't recently handled this f0
                         if (f0SciPitch not in prevF0NoteNames) \
-                            and (not recentlySaw( f0SciPitch )) \
-                            and (f0SciPitch not in lastNotes):
+                          and (not recentlySaw( f0SciPitch )) \
+                          and (f0SciPitch not in lastNotes):
+
                             prevF0NoteNames.append(f0SciPitch)
 
                             #print "%s @ %.2fHz" % (f0SciPitch, f0)
@@ -210,9 +211,6 @@ class Transcriber:
 
                             plt.text( xPos, yPos, f0SciPitch, transform=fig.gca().transAxes)
 
-
-                    # determine if this note is a harmonic... 
-                    thisNoteIsHarmonic = False
 
             lastNotes = noteNames
 
